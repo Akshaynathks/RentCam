@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rent_cam/core/widget/appbar.dart';
 import 'package:rent_cam/features/authentication/bloc/auth_bloc.dart';
 
 class HomePageWraper extends StatelessWidget {
@@ -9,7 +10,7 @@ class HomePageWraper extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AuthBloc(),
-      child:  HomePage(),
+      child: HomePage(),
     );
   }
 }
@@ -20,17 +21,16 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: CustomAppBar(
+        showBackButton: false,
+        centerWidget: Image(image: AssetImage('assets/images/croped.png')),
         actions: [
           IconButton(
-              onPressed: () {
-                final authBloc = BlocProvider.of<AuthBloc>(context);
-                authBloc.add(LogoutEvent());
-
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/login', (route) => false);
-              },
-              icon: const Icon(Icons.logout))
+            icon: const Icon(Icons.menu, color: Colors.black),
+            onPressed: () {
+              Navigator.pushNamed(context, '/menu');
+            },
+          ),
         ],
       ),
     );

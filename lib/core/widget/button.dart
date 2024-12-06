@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rent_cam/core/widget/animate.dart';
+import 'package:rent_cam/core/widget/color.dart';
 
 class CustomElevatedButton extends StatelessWidget {
   final String text;
@@ -11,15 +12,15 @@ class CustomElevatedButton extends StatelessWidget {
   final double iconSize; // Icon size
 
   const CustomElevatedButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.width = double.infinity, // Default width
     this.height = 50.0, // Default height
-    this.color = const Color(0xFFFFC107), // Default button color
+    this.color = AppColors.button, // Default button color
     this.icon, // Optional icon
     this.iconSize = 24.0, // Default icon size
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,7 @@ class CustomElevatedButton extends StatelessWidget {
               Text(
                 text,
                 style: const TextStyle(
-                  color: Colors.black, // Fixed text color
+                  color: AppColors.textPrimary, // Fixed text color
                   fontSize: 16, // Fixed font size
                   fontWeight: FontWeight.w500,
                 ),

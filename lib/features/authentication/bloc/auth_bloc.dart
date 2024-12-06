@@ -17,7 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           user = _auth.currentUser;
         });
         if (user != null) {
-          emit(Authenticated(user));
+          emit(Authenticated(user!));
         } else {
           emit(UnAuthenticated());
         }
