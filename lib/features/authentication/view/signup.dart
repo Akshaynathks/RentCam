@@ -46,103 +46,106 @@ class _SignupPageState extends State<SignupPage> {
 
       return Scaffold(
           body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: screenHeight * 0.05),
-            CustomTextFormField(
-                hintText: 'Full Name',
-                controller: _nameController,
-                validator: validateFullName),
-            SizedBox(height: screenHeight * 0.01),
-            CustomTextFormField(
-              hintText: 'Email',
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              validator: validateEmail,
-            ),
-            SizedBox(height: screenHeight * 0.01),
-            CustomTextFormField(
-                hintText: 'Mobile',
-                controller: _mobileController,
-                keyboardType: TextInputType.phone,
-                validator: validateMobile),
-            SizedBox(height: screenHeight * 0.01),
-            CustomTextFormField(
-              hintText: 'Password',
-              controller: _passwordController,
-              obscureText: true,
-              validator: validatePassword,
-            ),
-            SizedBox(height: screenHeight * 0.01),
-            CustomTextFormField(
-              hintText: 'Confirm Password',
-              controller: _confirmPasswordController,
-              obscureText: true,
-              validator: (value) =>
-                  validateConfirmPassword(value, _passwordController.text),
-            ),
-            SizedBox(height: screenHeight * 0.05),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomAnimateWidget(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: screenHeight * 0.05),
+              CustomTextFormField(
+                  hintText: 'Full Name',
+                  controller: _nameController,
+                  validator: validateFullName),
+              SizedBox(height: screenHeight * 0.01),
+              CustomTextFormField(
+                hintText: 'Email',
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                validator: validateEmail,
+              ),
+              SizedBox(height: screenHeight * 0.01),
+              CustomTextFormField(
+                  hintText: 'Mobile',
+                  controller: _mobileController,
+                  keyboardType: TextInputType.phone,
+                  validator: validateMobile),
+              SizedBox(height: screenHeight * 0.01),
+              CustomTextFormField(
+                hintText: 'Password',
+                controller: _passwordController,
+                obscureText: true,
+                validator: validatePassword,
+              ),
+              SizedBox(height: screenHeight * 0.01),
+              CustomTextFormField(
+                hintText: 'Confirm Password',
+                controller: _confirmPasswordController,
+                obscureText: true,
+                validator: (value) =>
+                    validateConfirmPassword(value, _passwordController.text),
+              ),
+              SizedBox(height: screenHeight * 0.05),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CustomAnimateWidget(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Checkbox(value: true, onChanged: null),
+                      Column(
+                        children: [
+                          const Text('By signing up you agree to our'),
+                          Row(
+                            children: [
+                              ClickableText(
+                                  text: 'Terms of Services', onTap: () {}),
+                              const Text('and'),
+                              ClickableText(
+                                  text: ' Privacy Policy', onTap: () {}),
+                            ],
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: screenHeight * 0.04),
+              CustomElevatedButton(
+                text: 'Sign Up',
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    // Validation successful
+                    final authBloc = BlocProvider.of<AuthBloc>(context);
+                    UserModel user = UserModel(
+                      name: _nameController.text,
+                      email: _emailController.text,
+                      mobile: _mobileController.text,
+                      password: _passwordController.text,
+                    );
+                    authBloc.add(SignupEvent(user: user));
+                  }
+                },
+                width: screenWidth * 0.8,
+                height: screenHeight * 0.07,
+              ),
+              SizedBox(height: screenHeight * 0.04),
+              CustomAnimateWidget(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Checkbox(value: true, onChanged: null),
-                    Column(
-                      children: [
-                        const Text('By signing up you agree to our'),
-                        Row(
-                          children: [
-                            ClickableText(
-                                text: 'Terms of Services', onTap: () {}),
-                            const Text('and'),
-                            ClickableText(
-                                text: ' Privacy Policy', onTap: () {}),
-                          ],
-                        ),
-                      ],
+                    const Text('Already a user?'),
+                    ClickableText(
+                      text: 'Login',
+                      onTap: () {
+                        Navigator.pushNamed(context, '/login');
+                      },
                     )
                   ],
                 ),
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.04),
-            CustomElevatedButton(
-              text: 'Sign Up',
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  // Validation successful
-                  final authBloc = BlocProvider.of<AuthBloc>(context);
-                  UserModel user = UserModel(
-                    name: _nameController.text,
-                    email: _emailController.text,
-                    mobile: _mobileController.text,
-                    password: _passwordController.text,
-                  );
-                  authBloc.add(SignupEvent(user: user));
-                }
-              },
-              width: screenWidth * 0.8,
-              height: screenHeight * 0.07,
-            ),
-            SizedBox(height: screenHeight * 0.04),
-            CustomAnimateWidget(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Already a user?'),
-                  ClickableText(
-                    text: 'Login',
-                    onTap: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
-                  )
-                ],
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ));
     });

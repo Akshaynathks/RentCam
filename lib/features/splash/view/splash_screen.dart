@@ -12,7 +12,7 @@ class SplashScreen extends StatelessWidget {
         if (state is Authenticated) {
           Navigator.pushReplacementNamed(context, '/home');
         } else if (state is UnAuthenticated) {
-          Navigator.pushReplacementNamed(context, '/auth');
+          Navigator.pushReplacementNamed(context, '/w1');
         }
       },
       child: const Scaffold(

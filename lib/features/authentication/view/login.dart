@@ -6,6 +6,7 @@ import 'package:rent_cam/features/authentication/bloc/auth_bloc.dart';
 import 'package:rent_cam/features/authentication/widget/clickable.dart';
 import 'package:rent_cam/features/authentication/widget/text_field.dart';
 import 'package:rent_cam/core/widget/button.dart';
+import 'package:rent_cam/features/authentication/widget/validators.dart';
 
 class LoginPageWrapper extends StatelessWidget {
   const LoginPageWrapper({super.key});
@@ -30,33 +31,11 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>();
-
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your email.';
-    } else if (!RegExp(r"^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$")
-        .hasMatch(value)) {
-      return 'Please enter a valid email address.';
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your password.';
-    } else if (value.length < 6) {
-      return 'Password must be at least 6 characters.';
-    }
-    return null;
   }
 
   @override
@@ -90,14 +69,14 @@ class _LoginPageState extends State<LoginPage> {
               CustomTextFormField(
                 hintText: 'Email',
                 controller: _emailController,
-                validator: _validateEmail,
+                validator: validateEmail,
               ),
               SizedBox(height: screenHeight * 0.02),
               CustomTextFormField(
                 obscureText: true,
                 hintText: 'Password',
                 controller: _passwordController,
-                validator: _validatePassword,
+                validator: validatePassword,
               ),
               SizedBox(height: screenHeight * 0.05),
 

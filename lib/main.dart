@@ -7,8 +7,6 @@ import 'package:rent_cam/features/authentication/view/signup.dart';
 import 'package:rent_cam/features/home/view/home_page.dart';
 import 'package:rent_cam/features/home/view/menu.dart';
 import 'package:rent_cam/features/splash/view/splash_screen.dart';
-import 'package:rent_cam/features/splash/view/welcome1.dart';
-import 'package:rent_cam/features/splash/view/welcome2.dart';
 import 'package:rent_cam/firebase_options.dart';
 
 void main() async {
@@ -31,8 +29,6 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/': (context) => SplashPageWrappe(),
-        '/wel1': (context) => WelcomePageOne(),
-        '/wel2': (context) => WelcomePageTwo(),
         '/auth': (context) => MainAuthPage(),
         '/login': (context) => LoginPageWrapper(),
         '/signup': (context) => SignupPageWrapper(),

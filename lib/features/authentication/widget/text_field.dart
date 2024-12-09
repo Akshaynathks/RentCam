@@ -11,9 +11,10 @@ class CustomTextFormField extends StatefulWidget {
   final Widget? prefixIcon; // Optional prefix icon
   final bool autoFocus; // Whether to focus on this field automatically
   final int maxLines; // Maximum lines (default: 1 for single-line input)
+  
 
   const CustomTextFormField({
-    Key? key,
+    super.key,
     required this.hintText,
     required this.controller,
     this.obscureText = false,
@@ -22,7 +23,7 @@ class CustomTextFormField extends StatefulWidget {
     this.prefixIcon,
     this.autoFocus = false,
     this.maxLines = 1,
-  }) : super(key: key);
+  });
 
   @override
   _CustomTextFormFieldState createState() => _CustomTextFormFieldState();
@@ -75,7 +76,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 17.0, vertical: 16.0),
           ),
-          validator: widget.validator, // Field validation
+          validator: widget.validator, 
+          autovalidateMode: AutovalidateMode.onUserInteraction,// Field validation
         ),
       ),
     );
