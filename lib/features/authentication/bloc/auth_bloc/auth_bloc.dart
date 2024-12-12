@@ -1,23 +1,21 @@
 import 'package:bloc/bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rent_cam/features/authentication/models/user_model.dart';
+import 'package:rent_cam/features/authentication/services/auth_services.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  AuthBloc() : super(AuthInitial()) {
+  final AuthService authService;
+
+  AuthBloc({required this.authService}) : super(AuthInitial()) {
     on<CheckLoaginStatusEvent>((event, emit) async {
-      User? user;
       try {
-        await Future.delayed(Duration(seconds: 1), () {
-          user = _auth.currentUser;
-        });
+        final user = await authService.getCurrentUser();
         if (user != null) {
-          emit(Authenticated(user!));
+          emit(Authenticated(user));
         } else {
           emit(UnAuthenticated());
         }
@@ -28,21 +26,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<SignupEvent>((event, emit) async {
       emit(AuthLoading());
-
       try {
-        final UserCredential = await _auth.createUserWithEmailAndPassword(
-            email: event.user.email, password: event.user.password.toString());
-
-        final user = UserCredential.user;
+        final user = await authService.signUp(
+          event.user.email,
+          event.user.password.toString(),
+          event.user.name,
+          event.user.mobile,
+        );
 
         if (user != null) {
-          FirebaseFirestore.instance.collection("users").doc(user.uid).set({
-            'uid': user.uid,
-            'email': user.email,
-            'name': event.user.name,
-            'phone': event.user.mobile,
-            'createdAt': DateTime.now()
-          });
           emit(Authenticated(user));
         } else {
           emit(UnAuthenticated());
@@ -55,22 +47,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoaginEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        final userCredential = await _auth.signInWithEmailAndPassword(
-            email: event.email, password: event.password);
-        final user = userCredential.user;
+        final user = await authService.login(event.email, event.password);
+        if (user != null) {
+          emit(Authenticated(user));
+        }
+      } catch (e) {
+        emit(AuthenticatedError(message: e.toString()));
+      }
+    });
+
+    on<GoogleSignInEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        final user = await authService.googleSignIn();
         if (user != null) {
           emit(Authenticated(user));
         } else {
           emit(UnAuthenticated());
         }
       } catch (e) {
-        emit(AuthenticatedError(message: (e).toString()));
+        emit(AuthenticatedError(message: e.toString()));
       }
     });
 
     on<LogoutEvent>((event, emit) async {
       try {
-        await _auth.signOut();
+        await authService.logout();
         emit(UnAuthenticated());
       } catch (e) {
         emit(AuthenticatedError(message: e.toString()));

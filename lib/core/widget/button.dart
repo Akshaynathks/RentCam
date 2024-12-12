@@ -10,6 +10,7 @@ class CustomElevatedButton extends StatelessWidget {
   final Color color; // Button color
   final Widget? icon; // Optional icon
   final double iconSize; // Icon size
+  final Color iconColor; // Icon color
 
   const CustomElevatedButton({
     super.key,
@@ -17,9 +18,10 @@ class CustomElevatedButton extends StatelessWidget {
     required this.onPressed,
     this.width = double.infinity, // Default width
     this.height = 50.0, // Default height
-    this.color = AppColors.button, // Default button color
+    this.color = AppColors.buttonSecondary, // Default button color
     this.icon, // Optional icon
     this.iconSize = 24.0, // Default icon size
+    this.iconColor = Colors.white, // Default icon color
   });
 
   @override
@@ -40,10 +42,12 @@ class CustomElevatedButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (icon != null) ...[
-                SizedBox(
-                  height: iconSize, // Set height of icon
-                  width: iconSize, // Set width of icon
-                  child: icon, // Add the optional icon if provided
+                IconTheme(
+                  data: IconThemeData(
+                    color: iconColor, // Apply the custom icon color
+                    size: iconSize, // Set the icon size
+                  ),
+                  child: icon!,
                 ),
                 const SizedBox(width: 8), // Space between icon and text
               ],

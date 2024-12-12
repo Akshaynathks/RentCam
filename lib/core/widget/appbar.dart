@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rent_cam/core/widget/color.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title; // Optional AppBar title
@@ -12,7 +13,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({
     super.key,
     this.title, // Title is optional
-    this.backgroundColor = Colors.white, // Default color
+    this.backgroundColor = AppColors.overlay, // Default color
     this.showBackButton = true, // Default to show back button
     this.actions,
     this.centerWidget, // Optional center widget
@@ -29,7 +30,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false, // Disable default back button behavior
       leading: showBackButton
           ? IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              icon: const Icon(Icons.arrow_back, color: AppColors.buttonPrimary),
               onPressed: () {
                 Navigator.pop(context); // Default back action
               },
@@ -45,7 +46,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ? Text(
                   title!,
                   style: const TextStyle(
-                    color: Colors.black, // Title text color
+                    color: AppColors.textPrimary, // Title text color
                     fontWeight: FontWeight.bold,
                   ),
                 )

@@ -20,13 +20,13 @@ class MainAuthPage extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(11),
-                color: AppColors.containerPrimary,
+                color: AppColors.surface,
               ),
               height: screenHeight * 0.09,
               child: const TabBar(
                 labelColor: AppColors.primary,
                 unselectedLabelColor: AppColors.secondary,
-                indicatorColor: AppColors.button,
+                indicatorColor: AppColors.buttonSecondary,
                 labelStyle:
                     TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 tabs: [

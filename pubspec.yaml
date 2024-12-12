@@ -45,6 +45,9 @@ dependencies:
   concentric_transition: ^1.0.3
   google_fonts: ^6.2.1
   path_provider: ^2.1.5
+  google_sign_in: ^6.2.2
+  meta: ^1.15.0
+  bloc: ^8.1.4
 
 dev_dependencies:
   flutter_test:

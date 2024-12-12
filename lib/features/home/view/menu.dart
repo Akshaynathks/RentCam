@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rent_cam/core/widget/appbar.dart';
 import 'package:rent_cam/core/widget/button.dart';
 import 'package:rent_cam/core/widget/color.dart';
-import 'package:rent_cam/features/authentication/bloc/auth_bloc.dart';
+import 'package:rent_cam/features/authentication/bloc/auth_bloc/auth_bloc.dart';
+import 'package:rent_cam/features/authentication/services/auth_services.dart';
 import 'package:rent_cam/features/home/widget/menu_button.dart';
 import 'package:rent_cam/features/home/widget/profile_photo.dart';
 import 'package:rent_cam/features/home/widget/user_details.dart';
@@ -13,7 +15,7 @@ class MenuPageWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthBloc(),
+      create: (context) => AuthBloc(authService: AuthService()),
       child: MenuPage(),
     );
   }
@@ -28,9 +30,8 @@ class MenuPage extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Menu'),
-        centerTitle: true,
+      appBar: CustomAppBar(
+        title: 'Menu',
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

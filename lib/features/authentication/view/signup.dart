@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rent_cam/core/widget/animate.dart';
 import 'package:rent_cam/core/widget/button.dart';
-import 'package:rent_cam/features/authentication/bloc/auth_bloc.dart';
+import 'package:rent_cam/core/widget/color.dart';
+import 'package:rent_cam/features/authentication/bloc/auth_bloc/auth_bloc.dart';
 import 'package:rent_cam/features/authentication/models/user_model.dart';
+import 'package:rent_cam/features/authentication/services/auth_services.dart';
 import 'package:rent_cam/features/authentication/widget/clickable.dart';
 import 'package:rent_cam/features/authentication/widget/text_field.dart';
 import 'package:rent_cam/features/authentication/widget/validators.dart';
@@ -14,7 +16,7 @@ class SignupPageWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (context) => AuthBloc(), child: const SignupPage());
+        create: (context) => AuthBloc(authService: AuthService()), child: const SignupPage());
   }
 }
 
@@ -38,11 +40,17 @@ class _SignupPageState extends State<SignupPage> {
     TextEditingController _confirmPasswordController = TextEditingController();
     BlocProvider.of<AuthBloc>(context);
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-      if (state is Authenticated) {
-        Future.microtask(() {
-          Navigator.pushNamedAndRemoveUntil(context, '/auth', (route) => false);
-        });
-      }
+        if (state is Authenticated) {
+    Future.microtask(() {
+      Navigator.pushNamedAndRemoveUntil(context, '/auth', (route) => false);
+    });
+  } else if (state is AuthenticatedError) {
+    Future.microtask(() {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(state.message)),
+      );
+    });
+  }
 
       return Scaffold(
           body: SingleChildScrollView(
@@ -91,15 +99,25 @@ class _SignupPageState extends State<SignupPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Checkbox(value: true, onChanged: null),
+                      const Checkbox(
+                        value: true,
+                        onChanged: null,
+                        fillColor:
+                            WidgetStatePropertyAll(AppColors.buttonPrimary),
+                      ),
                       Column(
                         children: [
-                          const Text('By signing up you agree to our'),
+                          const Text(
+                            'By signing up you agree to our',
+                            style: TextStyle(color: AppColors.textPrimary),
+                          ),
                           Row(
                             children: [
                               ClickableText(
                                   text: 'Terms of Services', onTap: () {}),
-                              const Text('and'),
+                              const Text(' and ',
+                                  style:
+                                      TextStyle(color: AppColors.textPrimary)),
                               ClickableText(
                                   text: ' Privacy Policy', onTap: () {}),
                             ],
@@ -134,11 +152,14 @@ class _SignupPageState extends State<SignupPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Already a user?'),
+                    const Text(
+                      'Already a user?',
+                      style: TextStyle(color: AppColors.textPrimary),
+                    ),
                     ClickableText(
                       text: 'Login',
                       onTap: () {
-                        Navigator.pushNamed(context, '/login');
+                        Navigator.pushNamed(context, '/auth');
                       },
                     )
                   ],

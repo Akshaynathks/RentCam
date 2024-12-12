@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rent_cam/features/authentication/bloc/auth_bloc.dart';
+import 'package:rent_cam/core/widget/color.dart';
+import 'package:rent_cam/features/authentication/bloc/auth_bloc/auth_bloc.dart';
+import 'package:rent_cam/features/authentication/services/auth_services.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -12,10 +14,11 @@ class SplashScreen extends StatelessWidget {
         if (state is Authenticated) {
           Navigator.pushReplacementNamed(context, '/home');
         } else if (state is UnAuthenticated) {
-          Navigator.pushReplacementNamed(context, '/w1');
+          Navigator.pushReplacementNamed(context, '/welcome');
         }
       },
       child: const Scaffold(
+        backgroundColor: AppColors.textAccent,
         body: Center(
           child: Image(image: AssetImage('assets/images/bgerase-444.png')),
         ),
@@ -30,7 +33,7 @@ class SplashPageWrappe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthBloc()..add(CheckLoaginStatusEvent()),
+      create: (context) => AuthBloc(authService: AuthService())..add(CheckLoaginStatusEvent()),
       child: SplashScreen(),
     );
   }
