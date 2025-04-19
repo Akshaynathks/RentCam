@@ -27,14 +27,15 @@ class SplashScreen extends StatelessWidget {
   }
 }
 
-class SplashPageWrappe extends StatelessWidget {
-  const SplashPageWrappe({super.key});
+class SplashPageWrapper extends StatelessWidget {
+  const SplashPageWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthBloc(authService: AuthService())..add(CheckLoaginStatusEvent()),
-      child: SplashScreen(),
+      create: (context) =>
+          AuthBloc(authService: AuthService())..add(CheckLoaginStatusEvent()),
+      child: const SplashScreen(),
     );
   }
 }

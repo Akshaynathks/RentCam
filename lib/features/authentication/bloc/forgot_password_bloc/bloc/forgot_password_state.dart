@@ -1,4 +1,3 @@
-// forgot_password_state.dart
 abstract class ForgotPasswordState {}
 
 class ForgotPasswordInitial extends ForgotPasswordState {}
@@ -12,3 +11,4 @@ class ForgotPasswordError extends ForgotPasswordState {
 
   ForgotPasswordError({required this.errorMessage});
 }
+

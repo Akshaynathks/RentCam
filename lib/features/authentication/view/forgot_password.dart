@@ -61,8 +61,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       },
                     ).then((_) {
                       Navigator.pushReplacement(
+                        // ignore: use_build_context_synchronously
                         context,
-                        MaterialPageRoute(builder: (context) => MainAuthPage()),
+                        MaterialPageRoute(builder: (context) => const MainAuthPage()),
                       );
                     });
                   } else if (state is ForgotPasswordError) {
@@ -79,7 +80,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Lottie animation
                     Lottie.asset(
                       'assets/images/Animation - forgot password.json',
                       height: 150,

@@ -19,4 +19,8 @@ class SignupEvent extends AuthEvent {
 
 class GoogleSignInEvent extends AuthEvent {}
 
-class LogoutEvent extends AuthEvent{}
+class LogoutEvent extends AuthEvent{
+  final BuildContext context;
+
+  LogoutEvent({required this.context});
+}

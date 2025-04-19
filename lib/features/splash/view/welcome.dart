@@ -4,19 +4,19 @@ import 'package:rent_cam/core/widget/color.dart';
 import 'package:rent_cam/features/splash/widget/welcome_card.dart';
 
 class WelcomePage extends StatefulWidget {
-  WelcomePage({super.key});
+  const WelcomePage({super.key});
 
   @override
   State<WelcomePage> createState() => _WelcomePageState();
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  int currentIndex = 0; // Track the current page index
+  int currentIndex = 0; 
 
-  // List of WelcomeCardData for each screen
+
   final List<WelcomeCardData> welcomeCardData = [
     const WelcomeCardData(
-      animationPath: 'assets/images/Animation - welcome1.json', // Lottie animation path
+      animationPath: 'assets/images/Animation - welcome1.json', 
       points: [
         "Wide Range of Rentals",
         "Flexible Options",
@@ -26,7 +26,7 @@ class _WelcomePageState extends State<WelcomePage> {
       backgroundColor: AppColors.secondary,
     ),
     const WelcomeCardData(
-      animationPath: 'assets/images/Animation - welcome2.json', // Lottie animation path
+      animationPath: 'assets/images/Animation - welcome2.json', 
       points: [
         "Custom Event Packages",
         "Increase Your Visibility",
@@ -43,33 +43,28 @@ class _WelcomePageState extends State<WelcomePage> {
     return Scaffold(
       body: Stack(
         children: [
-          // ConcentricPageView to display cards
           ConcentricPageView(
             colors: welcomeCardData.map((data) => data.backgroundColor).toList(),
             itemCount: welcomeCardData.length,
             physics: const BouncingScrollPhysics(),
             onChange: (index) {
-              // Update the current page index
               setState(() {
                 currentIndex = index;
               });
 
-              // Navigate to Auth page when the second page is reached
               if (currentIndex == welcomeCardData.length - 1) {
-                Future.delayed(Duration(seconds: 3), () {
+                Future.delayed(const Duration(seconds: 2), () {
                   Navigator.pushReplacementNamed(context, '/auth');
                 });
               }
             },
             itemBuilder: (int index) {
               final data = welcomeCardData[index];
-              return WelcomeCard(data: data); // Pass data to WelcomeCard
+              return WelcomeCard(data: data); 
             },
           ),
-
-          // Add text or message at the bottom
           Positioned(
-            bottom: 30, // Position above page indicators
+            bottom: 30, 
             left: 0,
             right: 0,
             child: Center(
@@ -82,7 +77,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         fontWeight: FontWeight.w600,
                       ),
                     )
-                  : Container(), // No button displayed on the last page
+                  : Container(), 
             ),
           ),
         ],

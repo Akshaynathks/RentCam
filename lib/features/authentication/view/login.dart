@@ -16,7 +16,7 @@ class LoginPageWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AuthBloc(authService: AuthService()),
-      child: LoginPage(),
+      child: const LoginPage(),
     );
   }
 }
@@ -29,8 +29,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -43,13 +43,24 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // MediaQuery
+    final authBloc = BlocProvider.of<AuthBloc>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    final authBloc = BlocProvider.of<AuthBloc>(context);
+    return BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
+      if (state is AuthenticatedError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(state.message), 
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
 
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      if (state is Authenticated) {
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      }
+    }, builder: (context, state) {
       if (state is AuthLoading) {
         return const Center(
           child: CircularProgressIndicator(
@@ -58,23 +69,6 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
 
-      if (state is Authenticated) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-        });
-      }
-
-      if (state is AuthenticatedError) {
-      // Show error message in UI
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(state.message),
-            backgroundColor: Colors.red,
-          ),
-        );
-      });
-    }
       return Scaffold(
         body: SingleChildScrollView(
           child: Form(
@@ -82,35 +76,32 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: screenHeight * 0.05),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                 CustomTextFormField(
                   hintText: 'Email',
                   controller: _emailController,
                   validator: validateEmail,
                 ),
-                SizedBox(height: screenHeight * 0.02),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 CustomTextFormField(
                   obscureText: true,
                   hintText: 'Password',
                   controller: _passwordController,
                   validator: validatePassword,
                 ),
-                SizedBox(height: screenHeight * 0.05),
-
-                //
-
+                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                 CustomElevatedButton(
                   text: 'Login',
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Only proceed if the form is valid
                       authBloc.add(LoaginEvent(
-                          email: _emailController.text.trim(),
-                          password: _passwordController.text.trim()));
+                        email: _emailController.text.trim(),
+                        password: _passwordController.text.trim(),
+                      ));
                     }
                   },
-                  height: screenHeight * 0.07,
-                  width: screenWidth * 0.9,
+                  height: MediaQuery.of(context).size.height * 0.07,
+                  width: MediaQuery.of(context).size.width * 0.9,
                 ),
 
                 //
@@ -138,11 +129,10 @@ class _LoginPageState extends State<LoginPage> {
                 const CustomAnimateWidget(
                   child: Row(
                     children: [
-                      // Left Line
                       Expanded(
                         child: Divider(
-                          color: AppColors.secondary, // Line color
-                          thickness: 1.0, // Line thickness
+                          color: AppColors.secondary, 
+                          thickness: 1.0, 
                         ),
                       ),
                       // "OR" Text
@@ -151,17 +141,16 @@ class _LoginPageState extends State<LoginPage> {
                         child: Text(
                           'OR',
                           style: TextStyle(
-                            fontSize: 16.0, // Font size
-                            fontWeight: FontWeight.bold, // Bold text
-                            color: AppColors.textSecondary, // Text color
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold, 
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ),
-                      // Right Line
                       Expanded(
                         child: Divider(
-                          color: AppColors.secondary, // Line color
-                          thickness: 1.0, // Line thickness
+                          color: AppColors.secondary, 
+                          thickness: 1.0, 
                         ),
                       ),
                     ],
@@ -169,7 +158,11 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: screenHeight * 0.04),
                 CustomElevatedButton(
-                  icon: Image.asset('assets/images/google.png',width: 25,height: 25,),
+                  icon: Image.asset(
+                    'assets/images/google.png',
+                    width: 25,
+                    height: 25,
+                  ),
                   text: 'Sign in with Google',
                   onPressed: () {
                     authBloc.add(GoogleSignInEvent());
@@ -177,17 +170,12 @@ class _LoginPageState extends State<LoginPage> {
                   color: AppColors.overlay,
                   width: screenWidth * 0.8,
                 ),
-                SizedBox(height: screenHeight * 0.02),
-                CustomElevatedButton(
-                  icon: Image.asset('assets/images/facebook.png',width: 25,height: 25,),
-                  text: 'Sign in with Google',
-                  onPressed: () {},
-                  color: AppColors.overlay,
-                  width: screenWidth * 0.8,
-                ),
-                SizedBox(height: screenHeight * 0.02),
+                SizedBox(height: screenHeight * 0.05),
                 const CustomAnimateWidget(
-                    child: Text('By continuing, you agree to our',style: TextStyle(color: AppColors.textPrimary),)),
+                    child: Text(
+                  'By continuing, you agree to our',
+                  style: TextStyle(color: AppColors.textPrimary),
+                )),
                 SizedBox(height: screenHeight * 0.01),
                 CustomAnimateWidget(
                   child: ClickableText(

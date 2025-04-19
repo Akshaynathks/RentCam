@@ -2,59 +2,107 @@ import 'package:flutter/material.dart';
 import 'package:rent_cam/core/widget/color.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String? title; // Optional AppBar title
-  final Color backgroundColor; // AppBar background color
-  final bool showBackButton; // Whether to show back button
-  final List<Widget>? actions; // Optional action buttons
-  final Widget? centerWidget; // Optional widget in the center (e.g., photo)
-  final double centerWidgetHeight; // Height for the center widget
-  final double centerWidgetWidth; // Width for the center widget
+  final String? title;
+  final Color backgroundColor;
+  final bool showBackButton;
+  final List<Widget>? actions;
+  final Widget? centerWidget;
+  final double centerWidgetHeight;
+  final double centerWidgetWidth;
+  final Widget? leadingAction;
+  final String? backButtonRoute; // New: Route to navigate when back is pressed
+  final Widget? leftIcon; // New: Left icon/widget (like search animation)
+  final VoidCallback? onLeftIconPressed; // New: Callback for left icon press
+  final bool showTitle; // New: Control title visibility
+  final double elevation; // New: AppBar elevation
+  final Color? backButtonColor; // New: Custom back button color
+  final Color? titleColor; // New: Custom title color
+  final double titleFontSize; // New: Custom title font size
 
   const CustomAppBar({
     super.key,
-    this.title, // Title is optional
-    this.backgroundColor = AppColors.overlay, // Default color
-    this.showBackButton = true, // Default to show back button
+    this.title,
+    this.backgroundColor = AppColors.overlay,
+    this.showBackButton = true,
     this.actions,
-    this.centerWidget, // Optional center widget
-    this.centerWidgetHeight = 70, // Default height for center widget
-    this.centerWidgetWidth = 70, // Default width for center widget
+    this.centerWidget,
+    this.centerWidgetHeight = 70,
+    this.centerWidgetWidth = 70,
+    this.leadingAction,
+    this.backButtonRoute,
+    this.leftIcon,
+    this.onLeftIconPressed,
+    this.showTitle = true,
+    this.elevation = 0,
+    this.backButtonColor = AppColors.buttonPrimary,
+    this.titleColor = AppColors.textPrimary,
+    this.titleFontSize = 16,
   });
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      elevation: 0,
+      elevation: elevation,
       backgroundColor: backgroundColor,
       centerTitle: true,
-      automaticallyImplyLeading: false, // Disable default back button behavior
-      leading: showBackButton
-          ? IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.buttonPrimary),
-              onPressed: () {
-                Navigator.pop(context); // Default back action
-              },
-            )
-          : null, // No back button if `showBackButton` is false
-      title: centerWidget != null
-          ? SizedBox(
-              height: centerWidgetHeight, // Apply custom height
-              width: centerWidgetWidth, // Apply custom width
-              child: centerWidget, // Display center widget
-            )
-          : (title != null
-              ? Text(
-                  title!,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary, // Title text color
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-              : null), // Show title if no center widget is provided
-      actions: actions, // Optional action buttons
+      automaticallyImplyLeading: false,
+      leading: _buildLeading(context),
+      title: _buildTitle(),
+      actions: _buildActions(),
     );
   }
 
+  Widget? _buildLeading(BuildContext context) {
+    if (leadingAction != null) return leadingAction;
+    if (leftIcon != null) {
+      return IconButton(
+        icon: leftIcon!,
+        onPressed: onLeftIconPressed,
+      );
+    }
+    if (showBackButton) {
+      return IconButton(
+        icon: Icon(Icons.arrow_back, color: backButtonColor),
+        onPressed: () {
+          if (backButtonRoute != null) {
+            Navigator.pushNamed(context, backButtonRoute!);
+          } else {
+            Navigator.pop(context);
+          }
+        },
+      );
+    }
+    return null;
+  }
+
+  Widget? _buildTitle() {
+    if (centerWidget != null) {
+      return SizedBox(
+        height: centerWidgetHeight,
+        width: centerWidgetWidth,
+        child: centerWidget,
+      );
+    }
+    if (title != null && showTitle) {
+      return Text(
+        title!,
+        style: TextStyle(
+          color: titleColor,
+          fontWeight: FontWeight.bold,
+          fontSize: titleFontSize,
+        ),
+      );
+    }
+    return null;                     
+  }
+
+  List<Widget>? _buildActions() {
+    if (actions != null && actions!.isNotEmpty) {
+      return actions;
+    }
+    return null;
+  }
+
   @override
-  Size get preferredSize => const Size.fromHeight(56); // Default AppBar height
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

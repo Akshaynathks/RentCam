@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:rent_cam/core/widget/animate.dart';
 
 class CustomTextFormField extends StatefulWidget {
-  final String hintText; // Placeholder text for the field (mandatory)
+  final String hintText; 
   final TextEditingController
-      controller; // Controller to manage text input (mandatory)
-  final bool obscureText; // For hiding text (e.g., passwords)
-  final TextInputType keyboardType; // Keyboard type (e.g., email, number)
-  final String? Function(String?)? validator; // Form field validation function
-  final Widget? prefixIcon; // Optional prefix icon
-  final bool autoFocus; // Whether to focus on this field automatically
-  final int maxLines; // Maximum lines (default: 1 for single-line input)
+      controller; 
+  final bool obscureText; 
+  final TextInputType keyboardType; 
+  final String? Function(String?)? validator; 
+  final Widget? prefixIcon; 
+  final bool autoFocus;
+  final int maxLines; 
   
 
   const CustomTextFormField({
@@ -44,13 +44,13 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomAnimateWidget(
         child: TextFormField(
-          controller: widget.controller, // Mandatory controller
+          controller: widget.controller, 
           obscureText: _isObscured,
           keyboardType: widget.keyboardType,
           autofocus: widget.autoFocus,
           maxLines: widget.maxLines,
           decoration: InputDecoration(
-            hintText: widget.hintText, // Mandatory hint text
+            hintText: widget.hintText, 
             prefixIcon: widget.prefixIcon,
             suffixIcon: widget.obscureText
                 ? IconButton(
@@ -60,7 +60,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                     ),
                     onPressed: () {
                       setState(() {
-                        _isObscured = !_isObscured; // Toggle visibility
+                        _isObscured = !_isObscured; 
                       });
                     },
                   )
@@ -77,7 +77,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 const EdgeInsets.symmetric(horizontal: 17.0, vertical: 16.0),
           ),
           validator: widget.validator, 
-          autovalidateMode: AutovalidateMode.onUserInteraction,// Field validation
+          autovalidateMode: AutovalidateMode.onUserInteraction,
         ),
       ),
     );

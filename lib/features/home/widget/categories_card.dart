@@ -1,0 +1,82 @@
+import 'package:flutter/material.dart';
+import 'package:rent_cam/core/widget/color.dart';
+import 'package:rent_cam/core/widget/shimmer.dart';
+
+class CategoryCard extends StatelessWidget {
+  final String imagePath;
+  final String title;
+  final VoidCallback onTap;
+
+  const CategoryCard({
+    super.key,
+    required this.imagePath,
+    required this.title,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          color: AppColors.cardGradientStart,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              height: 80,
+              width: 80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.grey[200],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: imagePath.isEmpty
+                    ? ShimmerEffect.rectangular(height: 70, width: 70)
+                    : Image.network(
+                        imagePath,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return ShimmerEffect.rectangular(
+                              height: 70, width: 70);
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.broken_image,
+                              size: 50, color: Colors.red);
+                        },
+                      ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.buttonText,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -5,6 +5,9 @@ import 'package:rent_cam/core/widget/button.dart';
 import 'package:rent_cam/core/widget/color.dart';
 import 'package:rent_cam/features/authentication/bloc/auth_bloc/auth_bloc.dart';
 import 'package:rent_cam/features/authentication/services/auth_services.dart';
+import 'package:rent_cam/features/home/bloc/user_details/user_details_bloc.dart';
+import 'package:rent_cam/features/home/services/user_service.dart';
+import 'package:rent_cam/features/home/view/my_orders.dart';
 import 'package:rent_cam/features/home/widget/menu_button.dart';
 import 'package:rent_cam/features/home/widget/profile_photo.dart';
 import 'package:rent_cam/features/home/widget/user_details.dart';
@@ -14,15 +17,23 @@ class MenuPageWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthBloc(authService: AuthService()),
-      child: MenuPage(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => AuthBloc(authService: AuthService()),
+        ),
+        BlocProvider(
+          create: (_) => UserDetailsBloc(userService: UserService())
+            ..add(FetchUserDetails()),
+        ),
+      ],
+      child: const MenuPage(),
     );
   }
 }
 
 class MenuPage extends StatelessWidget {
-  const MenuPage({Key? key}) : super(key: key);
+  const MenuPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,103 +41,136 @@ class MenuPage extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: 'Menu',
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Container(
-            height: screenHeight * 0.95,
-            width: screenWidth * 0.9,
-            decoration: BoxDecoration(
-              color: AppColors.secondary, // Background color
-              borderRadius: BorderRadius.circular(10), // Rounded corners
-            ),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                Container(
-                  height: screenHeight * 0.34,
-                  width: screenWidth * 0.8,
-                  decoration: BoxDecoration(
-                    color: AppColors.background, // Background color
-                    borderRadius: BorderRadius.circular(10), // Rounded corners
-                  ),
-                  child: const Column(
-                    children: [
-                      SizedBox(height: 20),
-                      CircleAvatarSection(),
-                      SizedBox(height: 20),
-                      UserInfoSection(),
-                      SizedBox(height: 20),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                MenuButton(
-                  icon: Icons.shopping_cart,
-                  label: 'My Orders',
-                  onTap: () {
-                    // Handle My Orders logic
-                  },
-                ),
-                const SizedBox(height: 10),
-                MenuButton(
-                  icon: Icons.camera,
-                  label: 'My Studio',
-                  onTap: () {
-                    // Handle My Studio logic
-                  },
-                ),
-                const SizedBox(height: 10),
-                MenuButton(
-                  icon: Icons.notifications,
-                  label: 'Notifications',
-                  onTap: () {
-                    // Handle Notifications logic
-                  },
-                ),
-                const SizedBox(height: 10),
-                MenuButton(
-                  icon: Icons.info,
-                  label: 'About Us',
-                  onTap: () {
-                    // Handle About Us logic
-                  },
-                ),
-                const SizedBox(height: 10),
-                MenuButton(
-                  icon: Icons.description,
-                  label: 'Terms of Use',
-                  onTap: () {
-                    // Handle Terms of Use logic
-                  },
-                ),
-                const SizedBox(height: 10),
-                MenuButton(
-                  icon: Icons.lock,
-                  label: 'Privacy Policy',
-                  onTap: () {
-                    // Handle Privacy Policy logic
-                  },
-                ),
-                const SizedBox(height: 30),
-                CustomElevatedButton(
-                  text: 'Logout',
-                  onPressed: () {
-                    final authBloc = BlocProvider.of<AuthBloc>(context);
-                    authBloc.add(LogoutEvent());
-
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, '/auth', (route) => false);
-                  },
-                  icon: const Icon(Icons.logout),
-                  width: screenWidth * 0.5,
-                )
-              ],
-            ) // Menu Buttons
-
-            ),
+          height: screenHeight * 0.95,
+          width: screenWidth * 0.9,
+          decoration: BoxDecoration(
+            color: AppColors.secondary,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              BlocBuilder<UserDetailsBloc, UserDetailsState>(
+                builder: (context, state) {
+                  if (state is UserDetailsLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is UserDetailsError) {
+                    return Center(child: Text("Error: ${state.error}"));
+                  } else if (state is UserDetailsLoaded) {
+                    return Container(
+                      height: screenHeight * 0.32,
+                      width: screenWidth * 0.8,
+                      decoration: BoxDecoration(
+                        color: AppColors.background,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 10),
+                          const CircleAvatarSection(),
+                          const SizedBox(height: 10),
+                          UserInfoSection(
+                            userDetails: state.userDetails,
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return const Center(child: Text("No data available."));
+                  }
+                },
+              ),
+              const SizedBox(height: 20),
+              MenuButton(
+                icon: Icons.shopping_cart,
+                label: 'My Orders',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MyOrders()),
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+              MenuButton(
+                icon: Icons.camera,
+                label: 'My Studio',
+                onTap: () {
+                  Navigator.pushNamed(context, '/studio');
+                },
+              ),
+              const SizedBox(height: 10),
+              MenuButton(
+                icon: Icons.notifications,
+                label: 'Notifications',
+                onTap: () {},
+              ),
+              const SizedBox(height: 10),
+              MenuButton(
+                icon: Icons.info,
+                label: 'About Us',
+                onTap: () {},
+              ),
+              const SizedBox(height: 10),
+              MenuButton(
+                icon: Icons.description,
+                label: 'Terms of Use',
+                onTap: () {},
+              ),
+              const SizedBox(height: 10),
+              MenuButton(
+                icon: Icons.lock,
+                label: 'Privacy Policy',
+                onTap: () {},
+              ),
+              const SizedBox(height: 30),
+              CustomElevatedButton(
+                text: 'Logout',
+                onPressed: () {
+                  final authBloc = BlocProvider.of<AuthBloc>(context);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext dialogContext) {
+                      return AlertDialog(
+                        title: const Text('Confirm Logout'),
+                        content:
+                            const Text('Are you sure you want to log out?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop();
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              authBloc.add(LogoutEvent(context: context));
+                              Navigator.of(dialogContext).pop();
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                '/auth',
+                                (route) => false,
+                              );
+                            },
+                            child: const Text('Logout'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(Icons.logout),
+                width: screenWidth * 0.5,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

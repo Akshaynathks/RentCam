@@ -1,162 +1,128 @@
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rent_cam/core/widget/color.dart';
+import 'package:rent_cam/features/authentication/widget/validators.dart';
+import 'package:rent_cam/features/home/bloc/user_details/user_details_bloc.dart';
 
 class UserInfoSection extends StatelessWidget {
-  const UserInfoSection({Key? key}) : super(key: key);
+  final Map<String, dynamic> userDetails;
 
-  Future<Map<String, dynamic>> fetchUserData() async {
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (user == null) {
-      throw Exception("User not logged in");
-    }
-
-    // Fetch data from Firestore
-    final userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
-
-    return userDoc.data() ?? {};
-  }
+  const UserInfoSection({super.key, required this.userDetails});
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return FutureBuilder<Map<String, dynamic>>(
-      future: fetchUserData(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    final username = userDetails['name'] ?? 'Unknown';
+    final phone = userDetails['phone'] ?? 'Unknown';
+    final email = FirebaseAuth.instance.currentUser?.email ?? 'Unknown';
 
-        if (snapshot.hasError || !snapshot.hasData) {
-          return const Center(child: Text("Error loading user data"));
-        }
-
-        final userData = snapshot.data!;
-        final username = userData['name'] ?? 'Unknown';
-        final email = FirebaseAuth.instance.currentUser?.email ?? 'Unknown';
-        final phone = userData['phone'] ?? 'Unknown';
-
-        return Container(
-          padding: const EdgeInsets.all(8.0),
-          height: screenHeight * 0.14,
-          width: screenWidth * 0.7,
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 255, 255, 255),
-            borderRadius: BorderRadius.circular(12), // Rounded corners
-          ),
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    username,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
+    return Container(
+      height: screenHeight * 0.15,
+      width: screenWidth * 0.65,
+      decoration: BoxDecoration(
+        color: AppColors.buttonText,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 9.0, top: 9.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  username,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 8),
-                  Text(email),
-                  const SizedBox(height: 8),
-                  Text(phone),
-                ],
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: IconButton(
-                  icon: const Icon(Icons.edit, color: Colors.blue),
-                  onPressed: () {
-                    _showEditDialog(context, username, phone);
-                  },
                 ),
-              ),
-            ],
+                const SizedBox(height: 8),
+                Text(email),
+                const SizedBox(height: 8),
+                Text(phone),
+              ],
+            ),
           ),
-        );
-      },
+          Positioned(
+            top: 0,
+            right: 0,
+            child: IconButton(
+              icon: const Icon(Icons.edit, color: Colors.blue),
+              onPressed: () => _showEditDialog(context, username, phone),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  void _showEditDialog(
-      BuildContext context, String currentName, String currentPhone) {
-    final TextEditingController nameController =
-        TextEditingController(text: currentName);
-    final TextEditingController phoneController =
-        TextEditingController(text: currentPhone);
+  void _showEditDialog(BuildContext context, String currentName, String currentPhone) {
+  final _formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController(text: currentName);
+  final phoneController = TextEditingController(text: currentPhone);
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text("Edit Profile"),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                ),
-              ],
-            ),
-            content: Column(
+  showDialog(
+    context: context,
+    builder: (context) {
+      return BlocListener<UserDetailsBloc, UserDetailsState>(
+        listener: (context, state) {
+          if (state is UserDetailsLoaded) {
+            Navigator.pop(context); 
+            Navigator.pop(context); 
+          } else if (state is UserDetailsError) {
+            Navigator.pop(context); 
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Error: ${state.error}")),
+            );
+          }
+        },
+        child: AlertDialog(
+          title: const Text("Edit Profile"),
+          content: Form(
+            key: _formKey,
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(
+                TextFormField(
                   controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: "Name",
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: const InputDecoration(labelText: "Name"),
+                  validator: validateFullName,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 const SizedBox(height: 16),
-                TextField(
+                TextFormField(
                   controller: phoneController,
-                  decoration: const InputDecoration(
-                    labelText: "Phone Number",
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(labelText: "Phone"),
+                  validator: validateMobile,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ],
             ),
-            actions: [
-              ElevatedButton(
-                onPressed: () async {
-                  final newName = nameController.text;
-                  final newPhone = phoneController.text;
-
-                  // Update in Firestore
-                  final user = FirebaseAuth.instance.currentUser;
-                  if (user != null) {
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(user.uid)
-                        .update({
-                      'name': newName,
-                      'phone': newPhone,
-                    });
-                  }
-
-                  Navigator.of(context).pop(); // Close the dialog
-                },
-                child: const Text("Save"),
-              ),
-            ],
           ),
-        );
-      },
-    );
-  }
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState?.validate() ?? false) {
+                  final name = nameController.text.trim();
+                  final phone = phoneController.text.trim();
+                  context.read<UserDetailsBloc>().add(UpdateUserDetails(name, phone));
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) => const Center(child: CircularProgressIndicator()),
+                  );
+                }
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
 }

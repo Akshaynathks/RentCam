@@ -4,12 +4,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 class CustomAnimateWidget extends StatelessWidget {
   final Widget child;
 
-  const CustomAnimateWidget({Key? key, required this.child}) : super(key: key);
+  const CustomAnimateWidget({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
     return Animate(
-      effects: [
+      effects: const [
         FadeEffect(duration: Duration(milliseconds: 800)),
         SlideEffect(curve: Curves.easeIn),
       ],

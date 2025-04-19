@@ -7,11 +7,11 @@ class ClickableText extends StatelessWidget {
   final VoidCallback onTap;
 
   const ClickableText({
-    Key? key,
+    super.key,
     required this.text,
     required this.onTap,
     this.style,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
