@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rent_cam/core/widget/color.dart';
 import 'package:rent_cam/core/widget/shimmer.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BrandCard extends StatelessWidget {
   final String imagePath;

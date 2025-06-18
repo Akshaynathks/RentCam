@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rent_cam/core/widget/color.dart';
+import 'package:rent_cam/core/utils/responsive_helper.dart';
 
 Widget buildSection({
   required String title,
@@ -10,11 +11,11 @@ Widget buildSection({
   bool isHorizontal = false,
   required BuildContext context,
   String routeName = '',
-  double itemWidth = 120, // Width for horizontal items
+  double itemWidth = 120,
 }) {
   return Container(
     height: height,
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+    padding: ResponsiveHelper.getResponsivePadding(context),
     decoration: BoxDecoration(
       gradient: const LinearGradient(
         colors: [
@@ -30,17 +31,20 @@ Widget buildSection({
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+          padding: EdgeInsets.only(
+            left: ResponsiveHelper.getResponsivePadding(context).left / 2,
+            top: ResponsiveHelper.getResponsivePadding(context).top / 2,
+          ),
           child: Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.buttonText,
               fontWeight: FontWeight.bold,
-              fontSize: 20,
+              fontSize: ResponsiveHelper.getResponsiveFontSize(context, 20),
             ),
           ),
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: ResponsiveHelper.getResponsiveHeight(context, 0.5)),
         Expanded(
           child: StreamBuilder<QuerySnapshot>(
             stream: stream,
@@ -49,12 +53,28 @@ Widget buildSection({
                 return const Center(child: CircularProgressIndicator());
               }
               if (snapshot.hasError) {
-                return Center(child: Text('Error loading $title'));
+                return Center(
+                  child: Text(
+                    'Error loading $title',
+                    style: TextStyle(
+                      fontSize:
+                          ResponsiveHelper.getResponsiveFontSize(context, 16),
+                    ),
+                  ),
+                );
               }
 
               final items = snapshot.data?.docs ?? [];
               if (items.isEmpty) {
-                return Center(child: Text('No $title available'));
+                return Center(
+                  child: Text(
+                    'No $title available',
+                    style: TextStyle(
+                      fontSize:
+                          ResponsiveHelper.getResponsiveFontSize(context, 16),
+                    ),
+                  ),
+                );
               }
 
               // Take only first 4 items
@@ -69,7 +89,12 @@ Widget buildSection({
                       return SizedBox(
                         width: itemWidth,
                         child: Padding(
-                          padding: const EdgeInsets.only(right: 10),
+                          padding: EdgeInsets.only(
+                            right:
+                                ResponsiveHelper.getResponsivePadding(context)
+                                        .right /
+                                    2,
+                          ),
                           child: itemBuilder(data),
                         ),
                       );
@@ -78,7 +103,11 @@ Widget buildSection({
                     SizedBox(
                       width: itemWidth,
                       child: Padding(
-                        padding: const EdgeInsets.only(right: 10),
+                        padding: EdgeInsets.only(
+                          right: ResponsiveHelper.getResponsivePadding(context)
+                                  .right /
+                              2,
+                        ),
                         child: GestureDetector(
                           onTap: () => Navigator.pushNamed(context, routeName),
                           child: Container(
@@ -97,24 +126,34 @@ Widget buildSection({
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Container(
-                                  height: 60,
-                                  width: 60,
+                                  height:
+                                      ResponsiveHelper.getResponsiveIconSize(
+                                          context, 60),
+                                  width: ResponsiveHelper.getResponsiveIconSize(
+                                      context, 60),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     color: Colors.grey[200],
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.arrow_forward,
-                                    size: 40,
+                                    size:
+                                        ResponsiveHelper.getResponsiveIconSize(
+                                            context, 40),
                                     color: Colors.blue,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                const Text(
+                                SizedBox(
+                                    height:
+                                        ResponsiveHelper.getResponsiveHeight(
+                                            context, 1)),
+                                Text(
                                   'See More',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize:
+                                        ResponsiveHelper.getResponsiveFontSize(
+                                            context, 14),
                                     fontWeight: FontWeight.w500,
                                     color: AppColors.buttonText,
                                   ),
@@ -131,15 +170,19 @@ Widget buildSection({
 
               // Grid view for non-horizontal sections
               return GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount:
+                      ResponsiveHelper.getResponsiveGridCrossAxisCount(context),
+                  crossAxisSpacing:
+                      ResponsiveHelper.getResponsivePadding(context).horizontal,
+                  mainAxisSpacing:
+                      ResponsiveHelper.getResponsivePadding(context).vertical,
                   childAspectRatio: 0.80,
                 ),
                 itemCount: limitedItems.length,
                 itemBuilder: (context, index) {
-                  final data = limitedItems[index].data() as Map<String, dynamic>;
+                  final data =
+                      limitedItems[index].data() as Map<String, dynamic>;
                   return itemBuilder(data);
                 },
               );

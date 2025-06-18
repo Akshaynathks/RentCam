@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rent_cam/core/widget/appbar.dart';
-import 'package:rent_cam/features/home/model/offer_model.dart';
-import 'package:rent_cam/features/home/model/product_model.dart';
-import 'package:rent_cam/features/home/view/search.dart';
+import 'package:rent_cam/core/widget/color.dart';
+import 'package:rent_cam/core/utils/responsive_helper.dart';
+import 'package:rent_cam/features/offer/model/offer_model.dart';
+import 'package:rent_cam/features/product/model/product_model.dart';
+import 'package:rent_cam/features/search/view/search.dart';
 import 'package:rent_cam/features/home/widget/brand_card.dart';
 import 'package:rent_cam/features/home/widget/carousel.dart';
 import 'package:rent_cam/features/home/widget/categories_card.dart';
@@ -19,10 +21,14 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: CustomAppBar(
+        backgroundColorGradient: const [
+          AppColors.cardGradientStart,
+          AppColors.cardGradientEnd,
+        ],
         leftIcon: Lottie.asset(
           'assets/images/Animation - search.json',
-          width: 60,
-          height: 60,
+          width: ResponsiveHelper.getResponsiveIconSize(context, 60),
+          height: ResponsiveHelper.getResponsiveIconSize(context, 60),
           repeat: true,
         ),
         onLeftIconPressed: () async {
@@ -41,15 +47,17 @@ class HomePage extends StatelessWidget {
         },
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 8.0),
+            padding: EdgeInsets.only(
+              right: ResponsiveHelper.getResponsivePadding(context).right,
+            ),
             child: GestureDetector(
               onTap: () {
                 Navigator.pushNamed(context, '/menu');
               },
               child: Lottie.asset(
                 'assets/images/Animation - menu.json',
-                width: 60,
-                height: 60,
+                width: ResponsiveHelper.getResponsiveIconSize(context, 60),
+                height: ResponsiveHelper.getResponsiveIconSize(context, 60),
                 repeat: true,
               ),
             ),
@@ -69,7 +77,8 @@ class HomePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 8),
+                SizedBox(
+                    height: ResponsiveHelper.getResponsiveHeight(context, 1)),
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('offers')
@@ -79,12 +88,28 @@ class HomePage extends StatelessWidget {
                       return const Center(child: CircularProgressIndicator());
                     }
                     if (snapshot.hasError) {
-                      return const Center(child: Text('Error loading offers'));
+                      return Center(
+                        child: Text(
+                          'Error loading offers',
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.getResponsiveFontSize(
+                                context, 16),
+                          ),
+                        ),
+                      );
                     }
 
                     final offers = snapshot.data?.docs ?? [];
                     if (offers.isEmpty) {
-                      return const Center(child: Text('No offers available'));
+                      return Center(
+                        child: Text(
+                          'No offers available',
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.getResponsiveFontSize(
+                                context, 16),
+                          ),
+                        ),
+                      );
                     }
 
                     final offerList = offers.map((doc) {
@@ -93,7 +118,8 @@ class HomePage extends StatelessWidget {
                         id: doc.id,
                         imageUrl: data?['imageUrl'] ?? '',
                         couponCode: data?['couponCode'] ?? 'N/A',
-                        percentage: data?['percentage'], description: '',
+                        percentage: data?['percentage'],
+                        description: '',
                       );
                     }).toList();
 
@@ -103,7 +129,8 @@ class HomePage extends StatelessWidget {
                     );
                   },
                 ),
-                const SizedBox(height: 10),
+                SizedBox(
+                    height: ResponsiveHelper.getResponsiveHeight(context, 1)),
                 buildSection(
                   title: 'Categories',
                   stream: FirebaseFirestore.instance
@@ -117,13 +144,14 @@ class HomePage extends StatelessWidget {
                           arguments: {'category': data['title']});
                     },
                   ),
-                  height: 200, // Adjusted height for horizontal layout
-                  isHorizontal: true, // Changed to horizontal
+                  height: ResponsiveHelper.isMobile(context) ? 200 : 250,
+                  isHorizontal: true,
                   context: context,
                   routeName: '/all-categories',
-                  itemWidth: 120, // Match your category card width
+                  itemWidth: ResponsiveHelper.isMobile(context) ? 120 : 150,
                 ),
-                const SizedBox(height: 10),
+                SizedBox(
+                    height: ResponsiveHelper.getResponsiveHeight(context, 1)),
                 buildSection(
                   title: 'Brands',
                   stream: FirebaseFirestore.instance
@@ -137,13 +165,14 @@ class HomePage extends StatelessWidget {
                           arguments: {'brand': data['name']});
                     },
                   ),
-                  height: 190,
+                  height: ResponsiveHelper.isMobile(context) ? 190 : 240,
                   isHorizontal: true,
                   context: context,
                   routeName: '/all-brands',
-                  itemWidth: 100, // Match your brand card width
+                  itemWidth: ResponsiveHelper.isMobile(context) ? 100 : 130,
                 ),
-                const SizedBox(height: 10),
+                SizedBox(
+                    height: ResponsiveHelper.getResponsiveHeight(context, 1)),
               ],
             ),
           ),

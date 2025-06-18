@@ -7,7 +7,7 @@ import 'package:rent_cam/features/authentication/bloc/auth_bloc/auth_bloc.dart';
 import 'package:rent_cam/features/authentication/services/auth_services.dart';
 import 'package:rent_cam/features/home/bloc/user_details/user_details_bloc.dart';
 import 'package:rent_cam/features/home/services/user_service.dart';
-import 'package:rent_cam/features/home/view/my_orders.dart';
+import 'package:rent_cam/features/product/view/my_orders.dart';
 import 'package:rent_cam/features/home/widget/menu_button.dart';
 import 'package:rent_cam/features/home/widget/profile_photo.dart';
 import 'package:rent_cam/features/home/widget/user_details.dart';
@@ -50,7 +50,7 @@ class MenuPage extends StatelessWidget {
           height: screenHeight * 0.95,
           width: screenWidth * 0.9,
           decoration: BoxDecoration(
-            color: AppColors.secondary,
+            color: AppColors.cardGradientStart,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
@@ -67,7 +67,7 @@ class MenuPage extends StatelessWidget {
                       height: screenHeight * 0.32,
                       width: screenWidth * 0.8,
                       decoration: BoxDecoration(
-                        color: AppColors.background,
+                        color: AppColors.cardGradientEnd,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(

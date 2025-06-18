@@ -6,11 +6,11 @@ import 'package:rent_cam/features/authentication/bloc/auth_bloc/auth_bloc.dart';
 import 'package:rent_cam/features/authentication/services/auth_services.dart';
 import 'package:rent_cam/features/home/bloc/home_bloc/home_bloc.dart';
 import 'package:rent_cam/features/home/bloc/home_bloc/home_state.dart';
-import 'package:rent_cam/features/home/view/cart.dart';
-import 'package:rent_cam/features/home/view/chat.dart';
+import 'package:rent_cam/features/product/view/cart.dart';
+import 'package:rent_cam/features/chat/view/chat.dart';
 import 'package:rent_cam/features/home/view/home_page.dart';
-import 'package:rent_cam/features/home/view/products.dart';
-import 'package:rent_cam/features/home/view/studio.dart';
+import 'package:rent_cam/features/product/view/products.dart';
+import 'package:rent_cam/features/studio/view/studio.dart';
 
 class HomePageWrapper extends StatelessWidget {
   const HomePageWrapper({super.key});

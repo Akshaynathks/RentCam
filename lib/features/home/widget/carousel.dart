@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:rent_cam/core/widget/shimmer.dart';
-import 'package:rent_cam/features/home/model/offer_model.dart';
-import 'package:rent_cam/features/home/view/offer_page.dart';
+import 'package:rent_cam/features/offer/model/offer_model.dart';
+import 'package:rent_cam/features/offer/view/offer_page.dart';
 
 class CustomCarousel extends StatelessWidget {
   final List<Offer> offers;

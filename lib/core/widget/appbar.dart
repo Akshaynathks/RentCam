@@ -3,26 +3,29 @@ import 'package:rent_cam/core/widget/color.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
-  final Color backgroundColor;
+  final List<Color>?
+      backgroundColorGradient; 
+  final Color? backgroundColor; 
   final bool showBackButton;
   final List<Widget>? actions;
   final Widget? centerWidget;
   final double centerWidgetHeight;
   final double centerWidgetWidth;
   final Widget? leadingAction;
-  final String? backButtonRoute; // New: Route to navigate when back is pressed
-  final Widget? leftIcon; // New: Left icon/widget (like search animation)
-  final VoidCallback? onLeftIconPressed; // New: Callback for left icon press
-  final bool showTitle; // New: Control title visibility
-  final double elevation; // New: AppBar elevation
-  final Color? backButtonColor; // New: Custom back button color
-  final Color? titleColor; // New: Custom title color
-  final double titleFontSize; // New: Custom title font size
+  final String? backButtonRoute;
+  final Widget? leftIcon;
+  final VoidCallback? onLeftIconPressed;
+  final bool showTitle;
+  final double elevation;
+  final Color? backButtonColor;
+  final Color? titleColor;
+  final double titleFontSize;
 
   const CustomAppBar({
     super.key,
     this.title,
-    this.backgroundColor = AppColors.overlay,
+    this.backgroundColorGradient,
+    this.backgroundColor = AppColors.overlay, 
     this.showBackButton = true,
     this.actions,
     this.centerWidget,
@@ -43,13 +46,34 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       elevation: elevation,
-      backgroundColor: backgroundColor,
+      backgroundColor:
+          Colors.transparent, 
+      flexibleSpace: _buildBackground(), 
       centerTitle: true,
       automaticallyImplyLeading: false,
       leading: _buildLeading(context),
       title: _buildTitle(),
       actions: _buildActions(),
     );
+  }
+
+  Widget? _buildBackground() {
+    if (backgroundColorGradient != null) {
+      return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: backgroundColorGradient!,
+            begin: Alignment.topLeft ,
+            end: Alignment.bottomRight,
+          ),
+        ),
+      );
+    } else if (backgroundColor != null) {
+      return Container(
+        color: backgroundColor,
+      );
+    }
+    return null;
   }
 
   Widget? _buildLeading(BuildContext context) {
@@ -93,7 +117,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       );
     }
-    return null;                     
+    return null;
   }
 
   List<Widget>? _buildActions() {
